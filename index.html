@@ -90,17 +90,41 @@ input,select{cursor:text}
 .kpi .kpi-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:28px;opacity:.15}
 
 /* FILTERS */
-.filters-row{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.filters-row{display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:wrap}
 .filter-btn{padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text-dim);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
 .filter-btn:hover{border-color:var(--accent);color:var(--text)}
 .filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
-.search-input{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:20px;padding:8px 16px 8px 36px;font-size:13px;outline:none;transition:border-color .2s;margin-left:auto;width:220px;font-family:'DM Sans',sans-serif}
+.search-input{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:20px;padding:8px 16px 8px 36px;font-size:13px;outline:none;transition:border-color .2s;width:220px;font-family:'DM Sans',sans-serif}
 .search-input:focus{border-color:var(--accent)}
 .search-wrap{position:relative}
 .search-wrap::before{content:'🔍';position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none}
 
+/* VIEW / GROUP TOGGLES */
+.view-toggle{display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.view-btn{padding:7px 13px;border:none;background:var(--surface);color:var(--text-muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.view-btn+.view-btn{border-left:1px solid var(--border)}
+.view-btn.active{background:var(--accent);color:#fff}
+.view-btn:hover:not(.active){background:var(--surface2);color:var(--text)}
+
+/* GROUP SECTIONS */
+.group-section{margin-bottom:10px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;animation:fadeUp .3s ease-out both}
+.group-header{padding:12px 18px;background:var(--surface2);display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s}
+.group-header:hover{background:var(--surface3)}
+.group-chevron{font-size:10px;color:var(--text-muted);transition:transform .2s;flex-shrink:0;line-height:1}
+.group-chevron.open{transform:rotate(90deg)}
+.group-title{font-size:13px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.group-stats{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.group-count{font-size:11px;color:var(--text-muted);background:var(--surface3);padding:2px 8px;border-radius:10px;font-weight:600}
+.group-pct{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
+.group-mini-bar{width:48px;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden}
+.group-mini-fill{height:100%;border-radius:2px}
+.group-body{padding:16px}
+.group-body.cards-view{padding:16px}
+.group-body.table-view{padding:0}
+.group-body.collapsed{display:none}
+
 /* PROJECT CARDS */
-.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(480px,1fr));gap:20px}
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(480px,1fr));gap:16px}
 @media(max-width:600px){.projects-grid{grid-template-columns:1fr}}
 
 .project-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:transform .15s,box-shadow .15s;animation:fadeUp .4s ease-out both}
@@ -161,6 +185,23 @@ input,select{cursor:text}
 .progress-track{height:4px;background:var(--surface3);border-radius:2px;overflow:hidden}
 .progress-fill-bar{height:100%;border-radius:2px;background:var(--green);transition:width .8s cubic-bezier(.16,1,.3,1)}
 
+/* TABLE VIEW */
+.table-wrap{overflow-x:auto}
+.projects-table{width:100%;border-collapse:collapse;min-width:640px}
+.projects-table th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);padding:9px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--surface2);position:sticky;top:0}
+.projects-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:13px}
+.projects-table tbody tr:last-child td{border-bottom:none}
+.projects-table tbody tr:hover td{background:var(--accent-glow);cursor:default}
+.t-name{font-weight:600;color:var(--text);max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.t-code{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);display:block;margin-top:2px}
+.t-person{font-size:12px;color:var(--text-dim);white-space:nowrap}
+.t-person+.t-person{color:var(--text-muted)}
+.t-bar{display:flex;align-items:center;gap:7px}
+.t-bar-track{width:52px;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;flex-shrink:0}
+.t-bar-fill{height:100%;border-radius:2px}
+.t-bar-txt{font-size:11px;font-weight:700;white-space:nowrap}
+.t-unit{font-size:12px;color:var(--text-dim);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:var(--overlay);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;animation:fadeUp .2s ease}
 .modal-overlay.hidden{display:none}
@@ -193,7 +234,7 @@ input,select{cursor:text}
 .toast-dismiss{margin-left:auto;cursor:pointer;color:var(--text-muted);font-size:16px;background:none;border:none;padding:0;color:var(--text-dim)}
 
 /* SECTION HEADER */
-.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
 .section-header h2{font-size:15px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.6px}
 
 /* LOADING SPINNER */
@@ -201,6 +242,10 @@ input,select{cursor:text}
 
 /* BADGE */
 .count-badge{background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px}
+
+/* GHOST BTN */
+.ghost-btn{padding:7px 14px;background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap}
+.ghost-btn:hover{border-color:var(--accent);color:var(--text)}
 </style>
 </head>
 <body>
@@ -267,28 +312,46 @@ input,select{cursor:text}
     </div>
   </div>
 
-  <!-- FILTERS + SEARCH -->
+  <!-- FILTERS + CONTROLS -->
   <div class="filters-row">
     <button class="filter-btn active" onclick="setFilter('all', this)">All Projects</button>
     <button class="filter-btn" onclick="setFilter('incomplete', this)">⚠️ Needs Sheets</button>
     <button class="filter-btn" onclick="setFilter('complete', this)">✅ Fully Equipped</button>
     <button class="filter-btn" onclick="setFilter('none', this)">🚨 Not Started</button>
-    <div class="search-wrap" style="margin-left:auto">
-      <input type="text" class="search-input" id="searchInput" placeholder="Search projects..." oninput="filterProjects()">
+
+    <div style="display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap">
+      <!-- Group by toggle -->
+      <div class="view-toggle" title="Group by">
+        <button class="view-btn active" id="groupUnitBtn" onclick="setGroupMode('unit',this)">⊞ By Unit</button>
+        <button class="view-btn" id="groupNoneBtn" onclick="setGroupMode('none',this)">≡ Flat</button>
+      </div>
+      <!-- View mode toggle -->
+      <div class="view-toggle" title="View mode">
+        <button class="view-btn active" id="viewCardsBtn" onclick="setViewMode('cards',this)">⊟ Cards</button>
+        <button class="view-btn" id="viewTableBtn" onclick="setViewMode('table',this)">☰ Table</button>
+      </div>
+      <!-- Search -->
+      <div class="search-wrap">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search projects…" oninput="filterProjects()">
+      </div>
     </div>
   </div>
 
-  <!-- PROJECTS GRID -->
+  <!-- SECTION HEADER -->
   <div class="section-header">
     <h2>Won Projects <span class="count-badge" id="projectCount">0</span></h2>
-    <button class="sync-btn" style="padding:7px 16px;font-size:12px" onclick="loadSampleData()">Load Sample Data</button>
+    <div style="display:flex;align-items:center;gap:8px" id="groupControls">
+      <button class="ghost-btn" onclick="expandAll()">⊞ Expand All</button>
+      <button class="ghost-btn" onclick="collapseAll()">⊟ Collapse All</button>
+      <button class="sync-btn" style="padding:7px 16px;font-size:12px" onclick="loadSampleData()">Load Sample Data</button>
+    </div>
   </div>
 
   <div id="projectsContainer">
     <div class="empty-state">
       <div class="icon">📡</div>
       <h3>No projects loaded</h3>
-      <p>Enter your JSON endpoint above and click Sync Projects,<br>or load sample data to preview the dashboard.</p>
+      <p>Click Refresh to load projects from data/projects.json,<br>or click Load Sample Data to preview.</p>
     </div>
   </div>
 
@@ -337,9 +400,12 @@ const SHEET_TYPES = [
   { id: 'kickoff',      name: 'Kickoff Deck',      icon: '🚀', iconClass: 'kickoff' },
 ];
 
-let projects = [];
+let projects     = [];
 let activeFilter = 'all';
 let sheetRegistry = {};
+let viewMode     = 'cards';  // 'cards' | 'table'
+let groupMode    = 'unit';   // 'unit'  | 'none'
+let collapsedGroups = new Set();
 
 // ── Normalize raw Lark record → dashboard shape ──────────────────────────────
 function normalizeRecord(item) {
@@ -390,7 +456,7 @@ function toggleTheme() {
   h.setAttribute('data-theme', h.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
 }
 
-// ── Load from projects.json ──────────────────────────────────────────────────
+// ── Sync / load ──────────────────────────────────────────────────────────────
 async function syncProjects() {
   setSyncState('loading');
   try {
@@ -430,22 +496,70 @@ function setSyncState(state) {
 
 function loadSampleData() { syncProjects(); }
 
+// ── View / group mode ────────────────────────────────────────────────────────
+function setViewMode(mode, el) {
+  viewMode = mode;
+  el.closest('.view-toggle').querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  filterProjects();
+}
+
+function setGroupMode(mode, el) {
+  groupMode = mode;
+  el.closest('.view-toggle').querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  const gc = document.getElementById('groupControls');
+  // show collapse/expand only in grouped mode
+  gc.querySelectorAll('.ghost-btn').forEach(b => b.style.display = mode === 'unit' ? '' : 'none');
+  filterProjects();
+}
+
+function toggleGroup(gid) {
+  const body    = document.getElementById('gb-' + gid);
+  const chevron = document.getElementById('gc-' + gid);
+  if (!body) return;
+  if (collapsedGroups.has(gid)) {
+    collapsedGroups.delete(gid);
+    body.classList.remove('collapsed');
+    if (chevron) chevron.classList.add('open');
+  } else {
+    collapsedGroups.add(gid);
+    body.classList.add('collapsed');
+    if (chevron) chevron.classList.remove('open');
+  }
+}
+
+function collapseAll() {
+  document.querySelectorAll('.group-body').forEach(b => {
+    const gid = b.id.replace('gb-', '');
+    collapsedGroups.add(gid);
+    b.classList.add('collapsed');
+  });
+  document.querySelectorAll('.group-chevron').forEach(c => c.classList.remove('open'));
+}
+
+function expandAll() {
+  collapsedGroups.clear();
+  document.querySelectorAll('.group-body').forEach(b => b.classList.remove('collapsed'));
+  document.querySelectorAll('.group-chevron').forEach(c => c.classList.add('open'));
+}
+
 // ── KPIs ─────────────────────────────────────────────────────────────────────
 function updateKPIs() {
   const total = projects.length;
   let full = 0, partial = 0, none = 0, totalSheets = 0, filledSheets = 0;
   projects.forEach(p => {
-    const vals = Object.values(p.sheets);
+    const vals   = Object.values(p.sheets);
     const filled = vals.filter(v => v !== null).length;
     filledSheets += filled; totalSheets += vals.length;
     if (filled === vals.length) full++;
     else if (filled === 0) none++;
     else partial++;
   });
-  document.getElementById('kpiTotal').textContent = total;
-  document.getElementById('kpiFull').textContent = full;
-  document.getElementById('kpiPartial').textContent = partial;
-  document.getElementById('kpiNone').textContent = none;
+  document.getElementById('kpiTotal').textContent      = total;
+  document.getElementById('kpiFull').textContent       = full;
+  document.getElementById('kpiPartial').textContent    = partial;
+  document.getElementById('kpiNone').textContent       = none;
   const pct = totalSheets > 0 ? Math.round((filledSheets / totalSheets) * 100) : 0;
   document.getElementById('kpiCompletion').textContent = pct + '%';
 }
@@ -461,8 +575,8 @@ function setFilter(f, el) {
 
 function filterProjects() {
   const q = document.getElementById('searchInput').value.toLowerCase();
-  let filtered = projects.filter(p => {
-    const vals = Object.values(p.sheets);
+  const filtered = projects.filter(p => {
+    const vals   = Object.values(p.sheets);
     const filled = vals.filter(v => v !== null).length;
     const total  = vals.length;
     if (activeFilter === 'complete'   && filled !== total) return false;
@@ -476,15 +590,103 @@ function filterProjects() {
   renderProjects(filtered);
 }
 
+// ── Render dispatcher ─────────────────────────────────────────────────────────
 function renderProjects(list) {
   const container = document.getElementById('projectsContainer');
   if (list.length === 0) {
     container.innerHTML = '<div class="empty-state"><div class="icon">🔍</div><h3>No projects match</h3><p>Try adjusting your filters or search query.</p></div>';
     return;
   }
-  container.innerHTML = '<div class="projects-grid">' + list.map((p, i) => renderProjectCard(p, i)).join('') + '</div>';
+
+  if (groupMode === 'none') {
+    if (viewMode === 'cards') {
+      container.innerHTML = '<div class="projects-grid">' + list.map((p, i) => renderProjectCard(p, i)).join('') + '</div>';
+    } else {
+      container.innerHTML = '<div class="table-wrap">' + buildTable(list, true) + '</div>';
+    }
+    return;
+  }
+
+  // ── Group by Business Unit ────────────────────────────────────────────────
+  const groups = {};
+  list.forEach(p => {
+    const key = p.unit || 'Unknown';
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(p);
+  });
+  const sortedKeys = Object.keys(groups).sort((a, b) => groups[b].length - groups[a].length);
+
+  let html = '';
+  sortedKeys.forEach((unit) => {
+    const items  = groups[unit];
+    const gid    = slugify(unit);
+    const isOpen = !collapsedGroups.has(gid);
+
+    let filledTotal = 0, sheetsTotal = 0;
+    items.forEach(p => {
+      const vals = Object.values(p.sheets);
+      filledTotal += vals.filter(v => v !== null).length;
+      sheetsTotal += vals.length;
+    });
+    const pct      = sheetsTotal > 0 ? Math.round((filledTotal / sheetsTotal) * 100) : 0;
+    const pctColor = pct === 100 ? 'var(--green)' : pct > 50 ? 'var(--amber)' : 'var(--red)';
+    const pctBg    = pct === 100 ? 'var(--green-dim)' : pct > 50 ? 'var(--amber-dim)' : 'var(--red-dim)';
+
+    html += '<div class="group-section">'
+      + '<div class="group-header" onclick="toggleGroup(\'' + gid + '\')">'
+      +   '<span class="group-chevron ' + (isOpen ? 'open' : '') + '" id="gc-' + gid + '">▶</span>'
+      +   '<span class="group-title">' + escapeHtml(unit) + '</span>'
+      +   '<div class="group-stats">'
+      +     '<div class="group-mini-bar"><div class="group-mini-fill" style="width:' + pct + '%;background:' + pctColor + '"></div></div>'
+      +     '<span class="group-pct" style="color:' + pctColor + ';background:' + pctBg + '">' + pct + '%</span>'
+      +     '<span class="group-count">' + items.length + '</span>'
+      +   '</div>'
+      + '</div>'
+      + '<div class="group-body ' + (viewMode === 'table' ? 'table-view' : 'cards-view') + ' ' + (isOpen ? '' : 'collapsed') + '" id="gb-' + gid + '">';
+
+    if (viewMode === 'cards') {
+      html += '<div class="projects-grid">' + items.map((p, i) => renderProjectCard(p, i)).join('') + '</div>';
+    } else {
+      html += '<div class="table-wrap">' + buildTable(items, false) + '</div>';
+    }
+
+    html += '</div></div>';
+  });
+
+  container.innerHTML = html;
 }
 
+// ── Table builder ─────────────────────────────────────────────────────────────
+function buildTable(list, showUnit) {
+  const unitCol = showUnit ? '<th>Business Unit</th>' : '';
+  let rows = list.map(p => {
+    const vals   = Object.values(p.sheets);
+    const filled = vals.filter(v => v !== null).length;
+    const total  = vals.length;
+    const pct    = Math.round((filled / total) * 100);
+    const pctColor = pct === 100 ? 'var(--green)' : pct > 50 ? 'var(--amber)' : 'var(--red)';
+    const statusClass = { active:'status-active', onboarding:'status-onboarding', completed:'status-completed', 'on-hold':'status-on-hold' }[p.status] || 'status-active';
+    const unitCell = showUnit ? '<td><span class="t-unit" title="' + escapeHtml(p.unit) + '">' + escapeHtml(p.unit) + '</span></td>' : '';
+    return '<tr>'
+      + '<td><span class="t-name" title="' + escapeHtml(p.name) + '">' + escapeHtml(p.name) + '</span>'
+      +     '<span class="t-code">' + escapeHtml(p.code) + '</span></td>'
+      + unitCell
+      + '<td><div class="t-person">' + escapeHtml(p.pm) + '</div><div class="t-person t-person">' + escapeHtml(p.am) + '</div></td>'
+      + '<td style="font-size:12px;font-weight:700;color:var(--gold);white-space:nowrap">' + formatCurrency(p.value, p.currency) + '</td>'
+      + '<td><span class="project-status ' + statusClass + '">' + escapeHtml(p.raw_status) + '</span></td>'
+      + '<td><div class="t-bar">'
+      +   '<div class="t-bar-track"><div class="t-bar-fill" style="width:' + pct + '%;background:' + pctColor + '"></div></div>'
+      +   '<span class="t-bar-txt" style="color:' + pctColor + '">' + filled + '/' + total + '</span>'
+      + '</div></td>'
+      + '<td style="font-size:12px;color:var(--text-muted);white-space:nowrap">' + formatDate(p.start_date) + ' → ' + formatDate(p.end_date) + '</td>'
+      + '</tr>';
+  }).join('');
+  return '<table class="projects-table">'
+    + '<thead><tr><th>Project</th>' + (showUnit ? '<th>Business Unit</th>' : '') + '<th>PM / AM</th><th>Value</th><th>Status</th><th>Sheets</th><th>Timeline</th></tr></thead>'
+    + '<tbody>' + rows + '</tbody></table>';
+}
+
+// ── Card renderer ─────────────────────────────────────────────────────────────
 function renderProjectCard(p, index) {
   const sheets = p.sheets;
   const vals   = Object.values(sheets);
@@ -492,7 +694,7 @@ function renderProjectCard(p, index) {
   const total  = vals.length;
   const pct    = Math.round((filled / total) * 100);
 
-  const statusClass = { active:'status-active', onboarding:'status-onboarding', completed:'status-completed', 'on-hold':'status-on-hold' }[p.status] || 'status-active';
+  const statusClass    = { active:'status-active', onboarding:'status-onboarding', completed:'status-completed', 'on-hold':'status-on-hold' }[p.status] || 'status-active';
   const completionColor = pct === 100 ? 'var(--green)' : pct > 50 ? 'var(--amber)' : 'var(--red)';
 
   const sheetsHTML = SHEET_TYPES.map(st => {
@@ -516,7 +718,7 @@ function renderProjectCard(p, index) {
     ? '<a href="'+p.request_url+'" target="_blank" style="color:var(--accent);text-decoration:none">'+escapeHtml(p.request_no)+' ↗</a>'
     : escapeHtml(p.request_no);
 
-  return '<div class="project-card" style="animation-delay:'+index*0.04+'s">'
+  return '<div class="project-card" style="animation-delay:'+Math.min(index,20)*0.03+'s">'
     + '<div class="project-card-header">'
     +   '<div class="project-card-header-left">'
     +     '<div class="project-name" title="'+escapeHtml(p.name)+'">'+escapeHtml(p.name)+'</div>'
@@ -550,13 +752,13 @@ function renderProjectCard(p, index) {
     + '</div>';
 }
 
-// ── Modal ────────────────────────────────────────────────────────────────────
+// ── Modal ─────────────────────────────────────────────────────────────────────
 let pendingCreate = null;
 
 function openCreateModal(projectId, sheetId, projectName, sheetName) {
   pendingCreate = { projectId, sheetId };
-  document.getElementById('modalSheetType').textContent  = sheetName;
-  document.getElementById('modalSheetTypeB').textContent = sheetName;
+  document.getElementById('modalSheetType').textContent   = sheetName;
+  document.getElementById('modalSheetTypeB').textContent  = sheetName;
   document.getElementById('modalProjectName').textContent = projectName;
   document.getElementById('modalSheetTitle').value = projectName + ' — ' + sheetName;
   document.getElementById('modalSheetUrl').value   = '';
@@ -593,7 +795,7 @@ function openSheet(projectId, sheetId, url) {
   if (url && url !== '#') window.open(url, '_blank');
 }
 
-// ── Toast ────────────────────────────────────────────────────────────────────
+// ── Toast ─────────────────────────────────────────────────────────────────────
 function showToast(msg, type) {
   type = type || 'info';
   const icons = { success: '✓', error: '✕', info: 'ℹ' };
@@ -605,7 +807,10 @@ function showToast(msg, type) {
   setTimeout(() => toast.remove(), 4000);
 }
 
-// ── Utils ────────────────────────────────────────────────────────────────────
+// ── Utils ─────────────────────────────────────────────────────────────────────
+function slugify(str) {
+  return str.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+}
 function formatDate(d) {
   if (!d) return '—';
   try { return new Date(d).toLocaleDateString('en-PH', { month:'short', day:'numeric', year:'numeric' }); }
@@ -625,7 +830,7 @@ function escapeAttr(str) {
   return String(str).replace(/'/g,"&#39;").replace(/"/g,'&quot;');
 }
 
-// ── Init ─────────────────────────────────────────────────────────────────────
+// ── Init ──────────────────────────────────────────────────────────────────────
 syncProjects();
 </script>
 </body>
