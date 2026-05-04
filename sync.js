@@ -5,6 +5,7 @@ const path  = require('path');
 
 const { LARK_APP_ID, LARK_APP_SECRET, LARK_APP_TOKEN, LARK_TABLE_ID } = process.env;
 
+const VIEW_ID    = 'vewLdBOvvX';
 const OUTPUT_PATH = path.join(__dirname, 'data/projects.json');
 
 async function getToken() {
@@ -22,7 +23,7 @@ async function fetchAllRecords(token) {
 
   let all = [], pageToken = null;
   do {
-    const params = { page_size: 100 };
+    const params = { page_size: 100, view_id: VIEW_ID };
     if (pageToken) params.page_token = pageToken;
     const res = await axios.get(baseUrl, { headers, params });
     if (res.data.code !== 0) throw new Error(`Fetch failed: ${res.data.msg}`);
@@ -42,7 +43,7 @@ async function sync() {
   const token = await getToken();
   console.log('  ✓ Token acquired\n');
 
-  console.log('  [2/2] Fetching records...');
+  console.log('  [2/2] Fetching records from view: ' + VIEW_ID);
   const records = await fetchAllRecords(token);
   console.log(`  ✓ ${records.length} records fetched\n`);
 
