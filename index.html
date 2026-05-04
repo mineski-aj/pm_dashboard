@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Project Management Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+[data-theme="dark"]{
+  --bg:#0B0E11;--surface:#141920;--surface2:#1B2230;--surface3:#222B3A;
+  --border:#2A3545;--text:#E8ECF1;--text-dim:#8B95A5;--text-muted:#5A6577;
+  --accent:#3B82F6;--accent-glow:rgba(59,130,246,.15);
+  --green:#10B981;--green-dim:rgba(16,185,129,.12);
+  --amber:#F59E0B;--amber-dim:rgba(245,158,11,.12);
+  --red:#EF4444;--red-dim:rgba(239,68,68,.12);
+  --purple:#8B5CF6;--purple-dim:rgba(139,92,246,.12);
+  --cyan:#06B6D4;--cyan-dim:rgba(6,182,212,.12);
+  --gold:#f1c232;--orange:#F97316;--orange-dim:rgba(249,115,22,.12);
+  --radius:12px;--radius-sm:8px;--overlay:rgba(0,0,0,.6)
+}
+[data-theme="light"]{
+  --bg:#F3F4F6;--surface:#FFF;--surface2:#F0F1F3;--surface3:#E5E7EB;
+  --border:#D1D5DB;--text:#111827;--text-dim:#4B5563;--text-muted:#9CA3AF;
+  --accent:#2563EB;--accent-glow:rgba(37,99,235,.1);
+  --green:#059669;--green-dim:rgba(5,150,105,.1);
+  --amber:#D97706;--amber-dim:rgba(217,119,6,.1);
+  --red:#DC2626;--red-dim:rgba(220,38,38,.1);
+  --purple:#7C3AED;--purple-dim:rgba(124,58,237,.1);
+  --cyan:#0891B2;--cyan-dim:rgba(8,145,178,.1);
+  --gold:#d97706;--orange:#EA580C;--orange-dim:rgba(234,88,12,.1);
+  --radius:12px;--radius-sm:8px;--overlay:rgba(0,0,0,.3)
+}
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-user-select:none;user-select:none;cursor:default}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
+td,th,input,textarea{-webkit-user-select:text;user-select:text;cursor:auto}
+button,a,[onclick]{cursor:pointer;-webkit-user-select:none;user-select:none}
+input,select{cursor:text}
+
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes growBar{from{width:0}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+.app{max-width:1440px;margin:0 auto;padding:24px 32px 48px}
+@media(max-width:600px){.app{padding:16px 12px 32px}}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;padding:20px 0 24px;border-bottom:1px solid var(--border);margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.header-left{display:flex;align-items:center;gap:16px}
+.header h1{font-size:22px;font-weight:700;letter-spacing:-.5px}
+.header h1 span{color:var(--accent)}
+.header-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tag{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:5px 12px;border-radius:20px;background:var(--surface2);color:var(--text-dim)}
+.tag.live{background:var(--green-dim);color:var(--green)}
+.tag.syncing{background:var(--amber-dim);color:var(--amber)}
+
+/* Theme toggle */
+.theme-btn{width:36px;height:36px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text-dim);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s}
+.theme-btn:hover{border-color:var(--accent);color:var(--text)}
+
+/* SYNC BAR */
+.sync-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;margin-bottom:24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.sync-input-group{display:flex;align-items:center;gap:8px;flex:1;min-width:260px}
+.sync-input-group label{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap}
+.sync-input{flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius-sm);padding:8px 12px;font-size:13px;font-family:'DM Mono',monospace;outline:none;transition:border-color .2s}
+.sync-input:focus{border-color:var(--accent)}
+.sync-btn{padding:9px 20px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity .2s;font-family:'DM Sans',sans-serif}
+.sync-btn:hover{opacity:.85}
+.sync-btn:disabled{opacity:.5;cursor:not-allowed}
+.sync-status{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px;margin-left:auto}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0}
+.sync-dot.loading{background:var(--amber);animation:pulse 1s infinite}
+.sync-dot.error{background:var(--red)}
+
+/* KPI STRIP */
+.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:28px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s;cursor:pointer}
+.kpi:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi.blue::before{background:var(--accent)}.kpi.green::before{background:var(--green)}.kpi.amber::before{background:var(--amber)}.kpi.purple::before{background:var(--purple)}.kpi.red::before{background:var(--red)}.kpi.cyan::before{background:var(--cyan)}
+.kpi .kpi-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:8px}
+.kpi .kpi-value{font-size:28px;font-weight:700;letter-spacing:-.5px}
+.kpi .kpi-sub{font-size:12px;color:var(--text-dim);margin-top:4px}
+.kpi .kpi-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:28px;opacity:.15}
+
+/* FILTERS */
+.filters-row{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.filter-btn{padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text-dim);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.filter-btn:hover{border-color:var(--accent);color:var(--text)}
+.filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.search-input{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:20px;padding:8px 16px 8px 36px;font-size:13px;outline:none;transition:border-color .2s;margin-left:auto;width:220px;font-family:'DM Sans',sans-serif}
+.search-input:focus{border-color:var(--accent)}
+.search-wrap{position:relative}
+.search-wrap::before{content:'🔍';position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none}
+
+/* PROJECT CARDS */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(480px,1fr));gap:20px}
+@media(max-width:600px){.projects-grid{grid-template-columns:1fr}}
+
+.project-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:transform .15s,box-shadow .15s;animation:fadeUp .4s ease-out both}
+.project-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+
+.project-card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.project-card-header-left{flex:1;min-width:0}
+.project-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
+.project-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.project-client{font-size:12px;color:var(--text-dim)}
+.project-value{font-size:12px;font-weight:700;color:var(--gold)}
+
+.project-status{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.status-active{background:var(--green-dim);color:var(--green)}
+.status-onboarding{background:var(--amber-dim);color:var(--amber)}
+.status-completed{background:var(--surface3);color:var(--text-muted)}
+.status-on-hold{background:var(--red-dim);color:var(--red)}
+
+.project-card-info{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;gap:20px;flex-wrap:wrap}
+.project-info-item{display:flex;flex-direction:column;gap:3px}
+.project-info-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted)}
+.project-info-value{font-size:13px;font-weight:600;color:var(--text-dim)}
+
+/* SHEETS SECTION */
+.sheets-section{padding:16px 20px}
+.sheets-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.sheets-title .completion-badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
+.sheets-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+.sheet-item{border-radius:var(--radius-sm);border:1px solid var(--border);padding:10px 12px;display:flex;align-items:center;gap:10px;transition:all .2s;position:relative;overflow:hidden}
+.sheet-item.has-sheet{cursor:pointer;background:var(--surface2)}
+.sheet-item.has-sheet:hover{border-color:var(--accent);background:var(--accent-glow)}
+.sheet-item.no-sheet{background:var(--surface2)}
+.sheet-item.no-sheet:hover{border-color:var(--amber)}
+
+.sheet-icon{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.sheet-icon.gantt{background:var(--accent-glow);color:var(--accent)}
+.sheet-icon.timeline{background:var(--green-dim);color:var(--green)}
+.sheet-icon.manpower{background:var(--purple-dim);color:var(--purple)}
+.sheet-icon.orgchart{background:var(--amber-dim);color:var(--amber)}
+.sheet-icon.budget{background:var(--gold-dim, rgba(241,194,50,.12));color:var(--gold)}
+.sheet-icon.risk{background:var(--red-dim);color:var(--red)}
+.sheet-icon.deliverables{background:var(--cyan-dim);color:var(--cyan)}
+.sheet-icon.kickoff{background:var(--orange-dim);color:var(--orange)}
+
+.sheet-info{flex:1;min-width:0}
+.sheet-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sheet-meta{font-size:11px;color:var(--text-muted);margin-top:1px}
+
+.sheet-action{margin-left:auto;flex-shrink:0}
+.sheet-link{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--accent);text-decoration:none;padding:4px 8px;border-radius:4px;transition:background .2s}
+.sheet-link:hover{background:var(--accent-glow)}
+.create-btn{padding:4px 10px;background:var(--amber-dim);border:1px solid var(--amber);color:var(--amber);border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap}
+.create-btn:hover{background:var(--amber);color:#fff}
+
+/* PROGRESS BAR in header */
+.sheet-progress{margin-top:6px}
+.progress-track{height:4px;background:var(--surface3);border-radius:2px;overflow:hidden}
+.progress-fill-bar{height:100%;border-radius:2px;background:var(--green);transition:width .8s cubic-bezier(.16,1,.3,1)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:var(--overlay);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;animation:fadeUp .2s ease}
+.modal-overlay.hidden{display:none}
+.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);width:480px;max-width:92vw;padding:28px;animation:slideDown .25s ease}
+.modal-box h3{font-size:17px;font-weight:700;margin-bottom:6px}
+.modal-box p{font-size:13px;color:var(--text-dim);margin-bottom:20px;line-height:1.6}
+.modal-form-row{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.modal-form-row label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted)}
+.modal-form-row input,.modal-form-row select{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;width:100%}
+.modal-form-row input:focus,.modal-form-row select:focus{border-color:var(--accent)}
+.modal-form-row select option{background:var(--surface2)}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.btn-cancel{padding:10px 20px;background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-cancel:hover{border-color:var(--red);color:var(--red)}
+.btn-create{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .2s}
+.btn-create:hover{opacity:.85}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:60px 20px;color:var(--text-muted)}
+.empty-state .icon{font-size:48px;margin-bottom:12px;opacity:.5}
+.empty-state h3{font-size:16px;font-weight:600;margin-bottom:6px;color:var(--text-dim)}
+.empty-state p{font-size:13px}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;font-size:13px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:10px;animation:fadeUp .3s ease;box-shadow:0 8px 24px rgba(0,0,0,.3);pointer-events:all;max-width:320px}
+.toast.success{border-color:var(--green);background:var(--green-dim)}
+.toast.error{border-color:var(--red);background:var(--red-dim)}
+.toast.info{border-color:var(--accent);background:var(--accent-glow)}
+.toast-dismiss{margin-left:auto;cursor:pointer;color:var(--text-muted);font-size:16px;background:none;border:none;padding:0;color:var(--text-dim)}
+
+/* SECTION HEADER */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.section-header h2{font-size:15px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.6px}
+
+/* LOADING SPINNER */
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:40px auto}
+
+/* BADGE */
+.count-badge{background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <h1>Project<span>Ops</span> Dashboard</h1>
+      <div class="header-meta">
+        <span class="tag live" id="statusTag">● LIVE</span>
+        <span class="tag" id="lastSyncTag">Last sync: Never</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">🌓</button>
+    </div>
+  </div>
+
+  <!-- SYNC BAR -->
+  <div class="sync-bar">
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px">Data source</span>
+      <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-dim)">./data/projects.json</span>
+    </div>
+    <button class="sync-btn" id="syncBtn" onclick="syncProjects()">⟳ Refresh</button>
+    <div class="sync-status">
+      <div class="sync-dot" id="syncDot"></div>
+      <span id="syncStatusText">Ready</span>
+    </div>
+  </div>
+
+  <!-- KPI STRIP -->
+  <div class="kpi-strip" id="kpiStrip">
+    <div class="kpi blue">
+      <div class="kpi-icon">📁</div>
+      <div class="kpi-label">Total Projects</div>
+      <div class="kpi-value" id="kpiTotal">—</div>
+      <div class="kpi-sub">Won projects loaded</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-icon">✅</div>
+      <div class="kpi-label">Fully Equipped</div>
+      <div class="kpi-value" id="kpiFull">—</div>
+      <div class="kpi-sub">All sheets ready</div>
+    </div>
+    <div class="kpi amber">
+      <div class="kpi-icon">⚠️</div>
+      <div class="kpi-label">Needs Attention</div>
+      <div class="kpi-value" id="kpiPartial">—</div>
+      <div class="kpi-sub">Missing some sheets</div>
+    </div>
+    <div class="kpi red">
+      <div class="kpi-icon">🚨</div>
+      <div class="kpi-label">Not Started</div>
+      <div class="kpi-value" id="kpiNone">—</div>
+      <div class="kpi-sub">No sheets created</div>
+    </div>
+    <div class="kpi cyan">
+      <div class="kpi-icon">📊</div>
+      <div class="kpi-label">Sheet Completion</div>
+      <div class="kpi-value" id="kpiCompletion">—</div>
+      <div class="kpi-sub">Across all projects</div>
+    </div>
+  </div>
+
+  <!-- FILTERS + SEARCH -->
+  <div class="filters-row">
+    <button class="filter-btn active" onclick="setFilter('all', this)">All Projects</button>
+    <button class="filter-btn" onclick="setFilter('incomplete', this)">⚠️ Needs Sheets</button>
+    <button class="filter-btn" onclick="setFilter('complete', this)">✅ Fully Equipped</button>
+    <button class="filter-btn" onclick="setFilter('none', this)">🚨 Not Started</button>
+    <div class="search-wrap" style="margin-left:auto">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search projects..." oninput="filterProjects()">
+    </div>
+  </div>
+
+  <!-- PROJECTS GRID -->
+  <div class="section-header">
+    <h2>Won Projects <span class="count-badge" id="projectCount">0</span></h2>
+    <button class="sync-btn" style="padding:7px 16px;font-size:12px" onclick="loadSampleData()">Load Sample Data</button>
+  </div>
+
+  <div id="projectsContainer">
+    <div class="empty-state">
+      <div class="icon">📡</div>
+      <h3>No projects loaded</h3>
+      <p>Enter your JSON endpoint above and click Sync Projects,<br>or load sample data to preview the dashboard.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- CREATE SHEET MODAL -->
+<div class="modal-overlay hidden" id="createModal">
+  <div class="modal-box">
+    <h3>Create <span id="modalSheetType"></span></h3>
+    <p>Set up a new <strong id="modalSheetTypeB"></strong> for <strong id="modalProjectName"></strong>. This will register the sheet in the system.</p>
+    <div class="modal-form-row">
+      <label>Sheet Title</label>
+      <input type="text" id="modalSheetTitle" placeholder="e.g. Project Alpha — Gantt Chart">
+    </div>
+    <div class="modal-form-row">
+      <label>Sheet URL / Location</label>
+      <input type="text" id="modalSheetUrl" placeholder="https://docs.google.com/spreadsheets/...">
+    </div>
+    <div class="modal-form-row">
+      <label>Template</label>
+      <select id="modalTemplate">
+        <option value="blank">Blank Sheet</option>
+        <option value="standard">Standard Template</option>
+        <option value="advanced">Advanced Template</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-create" onclick="confirmCreate()">✓ Create Sheet</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+const SHEET_TYPES = [
+  { id: 'gantt',        name: 'Gantt Chart',      icon: '📅', iconClass: 'gantt' },
+  { id: 'timeline',     name: 'Timeline',          icon: '🗓️', iconClass: 'timeline' },
+  { id: 'manpower',     name: 'Manpower List',     icon: '👥', iconClass: 'manpower' },
+  { id: 'orgchart',     name: 'Org Chart',         icon: '🏢', iconClass: 'orgchart' },
+  { id: 'budget',       name: 'Budget Sheet',      icon: '💰', iconClass: 'budget' },
+  { id: 'risk',         name: 'Risk Register',     icon: '⚠️', iconClass: 'risk' },
+  { id: 'deliverables', name: 'Deliverables List', icon: '📦', iconClass: 'deliverables' },
+  { id: 'kickoff',      name: 'Kickoff Deck',      icon: '🚀', iconClass: 'kickoff' },
+];
+
+let projects = [];
+let activeFilter = 'all';
+let sheetRegistry = {};
+
+// ── Normalize raw Lark record → dashboard shape ──────────────────────────────
+function normalizeRecord(item) {
+  const f = item.fields || {};
+  const person = (arr) => Array.isArray(arr) && arr.length ? (arr[0].en_name || arr[0].name) : '—';
+  const toDate  = (ts)  => ts ? new Date(ts).toISOString().split('T')[0] : null;
+  const sheet   = (key) => {
+    const val = f[key];
+    if (!val) return null;
+    const url = typeof val === 'object' ? (val.link || val.url) : val;
+    return url ? { url, updated: toDate(f['Submitted at']) } : null;
+  };
+  const rawStatus = (f['Status'] || '').toLowerCase();
+  const statusMap = { 'approved': 'active', 'under review': 'onboarding', 'rejected': 'on-hold', 'completed': 'completed' };
+  return {
+    id:          item.record_id,
+    name:        f['Project Name']  || '(Unnamed)',
+    code:        f['Project Code']  || '—',
+    unit:        f['Business Unit'] || '—',
+    pm:          person(f['PM']),
+    am:          person(f['AM']),
+    value:       parseFloat(f['GRAND TOTAL'] || 0),
+    currency:    f['GRAND TOTAL-Currency'] || 'PHP',
+    start_date:  toDate(f['Start Date']),
+    end_date:    toDate(f['End Date']),
+    submitted:   toDate(f['Submitted at']),
+    status:      statusMap[rawStatus] || 'active',
+    raw_status:  f['Status'] || '—',
+    tools:       Array.isArray(f['Required Tools']) ? f['Required Tools'].join(', ') : '—',
+    request_no:  typeof f['Request No.'] === 'object' ? f['Request No.'].text : (f['Request No.'] || '—'),
+    request_url: typeof f['Request No.'] === 'object' ? f['Request No.'].link : null,
+    sheets: {
+      gantt:        sheet('Gantt Chart URL'),
+      timeline:     sheet('Timeline URL'),
+      manpower:     sheet('Manpower List URL'),
+      orgchart:     sheet('Org Chart URL'),
+      budget:       sheet('Budget Sheet URL'),
+      risk:         sheet('Risk Register URL'),
+      deliverables: sheet('Deliverables URL'),
+      kickoff:      sheet('Kickoff Deck URL'),
+    }
+  };
+}
+
+// ── Theme ────────────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const h = document.documentElement;
+  h.setAttribute('data-theme', h.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+}
+
+// ── Load from projects.json ──────────────────────────────────────────────────
+async function syncProjects() {
+  setSyncState('loading');
+  try {
+    const res = await fetch('./data/projects.json?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const raw = await res.json();
+    projects = raw.map(normalizeRecord);
+    projects.forEach(p => { if (sheetRegistry[p.id]) Object.assign(p.sheets, sheetRegistry[p.id]); });
+    processAndRender();
+    setSyncState('success');
+    showToast('Loaded ' + projects.length + ' projects', 'success');
+  } catch (err) {
+    setSyncState('error');
+    showToast('Failed to load: ' + err.message, 'error');
+  }
+}
+
+function setSyncState(state) {
+  const dot  = document.getElementById('syncDot');
+  const text = document.getElementById('syncStatusText');
+  const btn  = document.getElementById('syncBtn');
+  const tag  = document.getElementById('statusTag');
+  dot.className = 'sync-dot';
+  if (state === 'loading') {
+    dot.classList.add('loading'); text.textContent = 'Syncing…'; btn.disabled = true;
+    tag.textContent = '⟳ SYNCING'; tag.className = 'tag syncing';
+  } else if (state === 'success') {
+    text.textContent = 'Last sync: ' + new Date().toLocaleTimeString();
+    document.getElementById('lastSyncTag').textContent = 'Synced: ' + new Date().toLocaleTimeString();
+    btn.disabled = false; tag.textContent = '● LIVE'; tag.className = 'tag live';
+  } else {
+    dot.classList.add('error'); text.textContent = 'Load failed'; btn.disabled = false;
+    tag.textContent = '✕ ERROR'; tag.className = 'tag';
+    tag.style.cssText = 'background:var(--red-dim);color:var(--red)';
+  }
+}
+
+function loadSampleData() { syncProjects(); }
+
+// ── KPIs ─────────────────────────────────────────────────────────────────────
+function updateKPIs() {
+  const total = projects.length;
+  let full = 0, partial = 0, none = 0, totalSheets = 0, filledSheets = 0;
+  projects.forEach(p => {
+    const vals = Object.values(p.sheets);
+    const filled = vals.filter(v => v !== null).length;
+    filledSheets += filled; totalSheets += vals.length;
+    if (filled === vals.length) full++;
+    else if (filled === 0) none++;
+    else partial++;
+  });
+  document.getElementById('kpiTotal').textContent = total;
+  document.getElementById('kpiFull').textContent = full;
+  document.getElementById('kpiPartial').textContent = partial;
+  document.getElementById('kpiNone').textContent = none;
+  const pct = totalSheets > 0 ? Math.round((filledSheets / totalSheets) * 100) : 0;
+  document.getElementById('kpiCompletion').textContent = pct + '%';
+}
+
+function processAndRender() { updateKPIs(); filterProjects(); }
+
+function setFilter(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  filterProjects();
+}
+
+function filterProjects() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  let filtered = projects.filter(p => {
+    const vals = Object.values(p.sheets);
+    const filled = vals.filter(v => v !== null).length;
+    const total  = vals.length;
+    if (activeFilter === 'complete'   && filled !== total) return false;
+    if (activeFilter === 'incomplete' && (filled === 0 || filled === total)) return false;
+    if (activeFilter === 'none'       && filled !== 0) return false;
+    if (q && !p.name.toLowerCase().includes(q) && !p.unit.toLowerCase().includes(q) &&
+             !p.pm.toLowerCase().includes(q)   && !p.code.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  document.getElementById('projectCount').textContent = filtered.length;
+  renderProjects(filtered);
+}
+
+function renderProjects(list) {
+  const container = document.getElementById('projectsContainer');
+  if (list.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">🔍</div><h3>No projects match</h3><p>Try adjusting your filters or search query.</p></div>';
+    return;
+  }
+  container.innerHTML = '<div class="projects-grid">' + list.map((p, i) => renderProjectCard(p, i)).join('') + '</div>';
+}
+
+function renderProjectCard(p, index) {
+  const sheets = p.sheets;
+  const vals   = Object.values(sheets);
+  const filled = vals.filter(v => v !== null).length;
+  const total  = vals.length;
+  const pct    = Math.round((filled / total) * 100);
+
+  const statusClass = { active:'status-active', onboarding:'status-onboarding', completed:'status-completed', 'on-hold':'status-on-hold' }[p.status] || 'status-active';
+  const completionColor = pct === 100 ? 'var(--green)' : pct > 50 ? 'var(--amber)' : 'var(--red)';
+
+  const sheetsHTML = SHEET_TYPES.map(st => {
+    const sd = sheets[st.id];
+    if (sd) {
+      return '<div class="sheet-item has-sheet" onclick="openSheet(\''+p.id+'\',\''+st.id+'\',\''+sd.url+'\')">'
+        + '<div class="sheet-icon '+st.iconClass+'">'+st.icon+'</div>'
+        + '<div class="sheet-info"><div class="sheet-name">'+st.name+'</div><div class="sheet-meta">Updated '+formatDate(sd.updated)+'</div></div>'
+        + '<div class="sheet-action"><a class="sheet-link" href="'+sd.url+'" target="_blank" onclick="event.stopPropagation()">Open ↗</a></div>'
+        + '</div>';
+    } else {
+      return '<div class="sheet-item no-sheet">'
+        + '<div class="sheet-icon '+st.iconClass+'" style="opacity:.4">'+st.icon+'</div>'
+        + '<div class="sheet-info"><div class="sheet-name" style="color:var(--text-muted)">'+st.name+'</div><div class="sheet-meta">Not created</div></div>'
+        + '<div class="sheet-action"><button class="create-btn" onclick="openCreateModal(\''+p.id+'\',\''+st.id+'\',\''+escapeAttr(p.name)+'\',\''+escapeAttr(st.name)+'\')">+ Create</button></div>'
+        + '</div>';
+    }
+  }).join('');
+
+  const reqLink = p.request_url
+    ? '<a href="'+p.request_url+'" target="_blank" style="color:var(--accent);text-decoration:none">'+escapeHtml(p.request_no)+' ↗</a>'
+    : escapeHtml(p.request_no);
+
+  return '<div class="project-card" style="animation-delay:'+index*0.04+'s">'
+    + '<div class="project-card-header">'
+    +   '<div class="project-card-header-left">'
+    +     '<div class="project-name" title="'+escapeHtml(p.name)+'">'+escapeHtml(p.name)+'</div>'
+    +     '<div class="project-meta">'
+    +       '<span class="project-client">📁 '+escapeHtml(p.code)+'</span>'
+    +       '<span class="project-value">'+formatCurrency(p.value, p.currency)+'</span>'
+    +     '</div>'
+    +     '<div class="sheet-progress" style="margin-top:8px">'
+    +       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
+    +         '<span style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Sheet Completion</span>'
+    +         '<span style="font-size:11px;font-weight:700;color:'+completionColor+'">'+filled+'/'+total+' · '+pct+'%</span>'
+    +       '</div>'
+    +       '<div class="progress-track"><div class="progress-fill-bar" style="width:'+pct+'%;background:'+completionColor+'"></div></div>'
+    +     '</div>'
+    +   '</div>'
+    +   '<span class="project-status '+statusClass+'">'+escapeHtml(p.raw_status)+'</span>'
+    + '</div>'
+    + '<div class="project-card-info">'
+    +   '<div class="project-info-item"><span class="project-info-label">PM</span><span class="project-info-value">👤 '+escapeHtml(p.pm)+'</span></div>'
+    +   '<div class="project-info-item"><span class="project-info-label">AM</span><span class="project-info-value">👤 '+escapeHtml(p.am)+'</span></div>'
+    +   '<div class="project-info-item"><span class="project-info-label">Unit</span><span class="project-info-value">'+escapeHtml(p.unit)+'</span></div>'
+    +   '<div class="project-info-item"><span class="project-info-label">Start</span><span class="project-info-value">'+formatDate(p.start_date)+'</span></div>'
+    +   '<div class="project-info-item"><span class="project-info-label">End</span><span class="project-info-value">'+formatDate(p.end_date)+'</span></div>'
+    +   '<div class="project-info-item"><span class="project-info-label">Request</span><span class="project-info-value">'+reqLink+'</span></div>'
+    + '</div>'
+    + '<div class="sheets-section">'
+    +   '<div class="sheets-title"><span>Required PM Sheets</span>'
+    +   '<span class="completion-badge" style="background:'+(pct===100?'var(--green-dim)':pct>0?'var(--amber-dim)':'var(--red-dim)')+';color:'+completionColor+'">'+(pct===100?'✓ Complete':filled+' of '+total)+'</span></div>'
+    +   '<div class="sheets-grid">'+sheetsHTML+'</div>'
+    + '</div>'
+    + '</div>';
+}
+
+// ── Modal ────────────────────────────────────────────────────────────────────
+let pendingCreate = null;
+
+function openCreateModal(projectId, sheetId, projectName, sheetName) {
+  pendingCreate = { projectId, sheetId };
+  document.getElementById('modalSheetType').textContent  = sheetName;
+  document.getElementById('modalSheetTypeB').textContent = sheetName;
+  document.getElementById('modalProjectName').textContent = projectName;
+  document.getElementById('modalSheetTitle').value = projectName + ' — ' + sheetName;
+  document.getElementById('modalSheetUrl').value   = '';
+  document.getElementById('createModal').classList.remove('hidden');
+  setTimeout(() => document.getElementById('modalSheetUrl').focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('createModal').classList.add('hidden');
+  pendingCreate = null;
+}
+
+function confirmCreate() {
+  if (!pendingCreate) return;
+  const url   = document.getElementById('modalSheetUrl').value.trim() || '#';
+  const title = document.getElementById('modalSheetTitle').value.trim();
+  const { projectId, sheetId } = pendingCreate;
+  const project = projects.find(p => p.id === projectId);
+  if (project) {
+    project.sheets[sheetId] = { url, title, updated: new Date().toISOString().split('T')[0] };
+    if (!sheetRegistry[projectId]) sheetRegistry[projectId] = {};
+    sheetRegistry[projectId][sheetId] = { url, title, updated: new Date().toISOString().split('T')[0] };
+  }
+  closeModal();
+  processAndRender();
+  showToast('Sheet registered: ' + title, 'success');
+}
+
+document.getElementById('createModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+function openSheet(projectId, sheetId, url) {
+  if (url && url !== '#') window.open(url, '_blank');
+}
+
+// ── Toast ────────────────────────────────────────────────────────────────────
+function showToast(msg, type) {
+  type = type || 'info';
+  const icons = { success: '✓', error: '✕', info: 'ℹ' };
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  toast.innerHTML = '<span>'+icons[type]+'</span><span>'+msg+'</span><button class="toast-dismiss" onclick="this.parentElement.remove()">×</button>';
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 4000);
+}
+
+// ── Utils ────────────────────────────────────────────────────────────────────
+function formatDate(d) {
+  if (!d) return '—';
+  try { return new Date(d).toLocaleDateString('en-PH', { month:'short', day:'numeric', year:'numeric' }); }
+  catch(e) { return d; }
+}
+function formatCurrency(val, cur) {
+  cur = cur || 'PHP';
+  if (!val || val === 0) return '—';
+  if (val >= 1000000) return cur + ' ' + (val/1000000).toFixed(2) + 'M';
+  if (val >= 1000)    return cur + ' ' + (val/1000).toFixed(1) + 'K';
+  return cur + ' ' + val.toLocaleString();
+}
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escapeAttr(str) {
+  return String(str).replace(/'/g,"&#39;").replace(/"/g,'&quot;');
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+syncProjects();
+</script>
+</body>
+</html>
